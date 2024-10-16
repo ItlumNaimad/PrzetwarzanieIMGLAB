@@ -2,7 +2,8 @@ import org.opencv.core.*;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
+import java.util.ArrayList;
+import java.util.List;
 import static org.opencv.imgproc.Imgproc.putText;
 
 public class Main {
@@ -28,6 +29,7 @@ public class Main {
         okienko("obrazbmp.bmp","tobmp", false);
         okienko("obrazgif.gif","togif", false);
         okienko("zapispng.png","topng", false); */
+        /* ZAD6
         Mat img = Imgcodecs.imread("zapisane.jpg");
         Point org = new Point(0, 360);
         int fontType = Imgproc.FONT_HERSHEY_TRIPLEX;
@@ -38,6 +40,10 @@ public class Main {
         HighGui.namedWindow("zad6", HighGui.WINDOW_NORMAL);
         HighGui.imshow("zad6", img);
         HighGui.waitKey(0);
+        */
+
+        //ZAD7
+        geometrical();
     }
     /*
     Funkcja okienko przyjmuje parametry
@@ -62,6 +68,21 @@ public class Main {
         }
         else
             HighGui.imshow(nameWin, img);
+        HighGui.waitKey();
+    }
+    public static void geometrical() {
+        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+        Mat grafika = Imgcodecs.imread("zapisane.jpg");
+        Scalar color = new Scalar(40, 120, 40); //FORMAT KOLORU BGR
+        Scalar color1 = new Scalar(0, 120, 140); //kolor dla linii prostej
+        Scalar color2 = new Scalar(210, 170, 100); //kolor dla prostokątu
+        //Rysowanie koła
+        Imgproc.circle(grafika, new Point(495, 265), 55, color, Imgproc.FILLED);
+        //Prosta
+        Imgproc.line(grafika, new Point(130,20), new Point(540, 111), color1, 5);
+        //Drawing prostokąt
+        Imgproc.rectangle(grafika, new Point(150, 50), new Point(250, 150),color2, Imgproc.FILLED);
+        HighGui.imshow("figury", grafika);
         HighGui.waitKey();
     }
 }
