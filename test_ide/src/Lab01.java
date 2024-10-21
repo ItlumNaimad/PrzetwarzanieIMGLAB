@@ -7,7 +7,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 public class Lab01 {
-    public void Lab01(){
+    public Lab01(){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         /* ZAD1
         Mat img = new Mat(3, 3, CvType.CV_8U);
