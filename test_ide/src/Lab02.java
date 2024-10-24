@@ -46,6 +46,7 @@ public class Lab02 {
          */
         // ZAD3
         //**TUTAJ NALEŻY PODAĆ ŻADANY KĄT ORBOTU**
+        /*
         double kat_obrotu = 45;
         // wyżej mamy kąt orbotu, a niżej mamy punkt centralny obrotu
         Point center = new Point(img.width() / 2, img.height() / 2);
@@ -56,9 +57,29 @@ public class Lab02 {
         Mat obrocony = new Mat();
         // Zastosuj rotację
         Imgproc.warpAffine(img, obrocony, rotationMatrix, new Size(img.width(), img.height()));
-        HighGui.namedWindow("obraz", HighGui.WINDOW_AUTOSIZE);
-        HighGui.imshow("obraz", obrocony);
+         */
+        /* ** ZADANIE 4 **
+        // Definicja prostokątu do wycięcia
+        Rect prostokat = new Rect(50, 50, 200, 150);
+        // Utwórz nową macierz o takich samych rozmiarach jak ROI
+        Mat wyciecie = new Mat(prostokat.height, prostokat.width, img.type(), new Scalar(0));
+        // Kopia fragmentut obrazu do nowej macierzy
+        img.submat(prostokat).copyTo(wyciecie);
+        HighGui.namedWindow("obraz1", HighGui.WINDOW_NORMAL);
+        HighGui.imshow("obraz1", wyciecie);
+        // ** DRUGI SPOSÓB**
+        // Definicja prostokątu  do wycięcia
+        // Wartości: x, y, szerokość, wysokość
+        Rect prostokat2 = new Rect(50, 50, 200, 150);
+
+        // Funkcja submat() wycina
+        Mat wyciecie2 = img.submat(prostokat2);
+        */
+
+        HighGui.namedWindow("obraz2", HighGui.WINDOW_NORMAL);
+        HighGui.imshow("obraz2", wyciecie2);
         HighGui.waitKey();
+
 
     }
 
