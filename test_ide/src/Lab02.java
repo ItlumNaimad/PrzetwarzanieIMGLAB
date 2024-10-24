@@ -1,7 +1,4 @@
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -17,7 +14,6 @@ public class Lab02 {
             System.out.println("Program Arguments: [image_name -- default ../data/lena.jpg] \n");
             System.exit(-1);
         }
-
         /* ZAD1
         // Wartości przesunięcia w pikselach
         int Tx = 50; // Przesunięcie w osi X (prawo)
@@ -33,29 +29,37 @@ public class Lab02 {
         Mat shiftedImg = new Mat();
         Imgproc.warpAffine(img, shiftedImg, transMat, new Size(img.cols(), img.rows()));
         */
-
+        /* ZAD2
         // Macierze odbić obrazu
         Mat pionowo = new Mat();
         Mat poziomo = new Mat();
         Mat pionpoziom = new Mat();
 
         // Odbicie obrazu w pionie
-        //Core.flip(img, pionowo, 0); // flipCode = 0 (odbicie w pionie)
+        Core.flip(img, pionowo, 0); // flipCode = 0 (odbicie w pionie)
 
         // Odbicie obrazu w poziomie
-        //Core.flip(img, poziomo, 1); // flipCode = 1 (odbicie w poziomie)
+        Core.flip(img, poziomo, 1); // flipCode = 1 (odbicie w poziomie)
 
         // Odbicie obrazu w pionie i poziomie
         Core.flip(img, pionpoziom, -1); // flipCode = 1 (odbicie w poziomie)
+         */
+        // ZAD3
+        //**TUTAJ NALEŻY PODAĆ ŻADANY KĄT ORBOTU**
+        double kat_obrotu = 45;
+        // wyżej mamy kąt orbotu, a niżej mamy punkt centralny obrotu
+        Point center = new Point(img.width() / 2, img.height() / 2);
+        // Oblicz macierz rotacji (obrót o kat_obrotu stopni)
+        //To chyba jedna z dłużyszch metod
+        Mat rotationMatrix = Imgproc.getRotationMatrix2D(center, kat_obrotu, 1.0);
+        // Stwórz macierz do przechowywania obróconego obrazu
+        Mat obrocony = new Mat();
+        // Zastosuj rotację
+        Imgproc.warpAffine(img, obrocony, rotationMatrix, new Size(img.width(), img.height()));
         HighGui.namedWindow("obraz", HighGui.WINDOW_AUTOSIZE);
-        HighGui.imshow("obraz", pionpoziom);
+        HighGui.imshow("obraz", obrocony);
         HighGui.waitKey();
 
     }
-    public static void okienko(String pathFile, String nameWin) {
-        Mat img = Imgcodecs.imread(pathFile);
-        HighGui.namedWindow(nameWin, HighGui.WINDOW_AUTOSIZE);
-        HighGui.imshow(nameWin, img);
-        HighGui.waitKey();
-    }
+
 }
