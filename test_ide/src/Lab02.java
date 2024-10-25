@@ -75,10 +75,44 @@ public class Lab02 {
         // Funkcja submat() wycina
         Mat wyciecie2 = img.submat(prostokat2);
         */
+        //**ZADANIE 5**
+        // METODA RESIZE()
+        Mat resizedImg2x = new Mat();
+        // Metoda resize() wymaga przemnożenia przez żądane wielkości
+        Imgproc.resize(img, resizedImg2x, new Size(img.width() * 0.5, img.height() * 0.5));
+        // Nie wpisywałem nowego kodu tylk zedytowałem liczby użyte do obliczeń
+        // W metodzie resize użyłem wartości ułamkowych by pomniejszyć obraz
+        // Powiększa 4-krotnie za pomocą resize
+        Mat resizedImg4x = new Mat();
+        Imgproc.resize(img, resizedImg4x, new Size(img.width() * 0.25, img.height() * 0.25));
 
-        HighGui.namedWindow("obraz2", HighGui.WINDOW_NORMAL);
-        HighGui.imshow("obraz2", wyciecie2);
-        HighGui.waitKey();
+        // Zapis obrazków na dysku
+        Imgcodecs.imwrite("zapisane_05x.jpg", resizedImg2x);
+        Imgcodecs.imwrite("zapisane_025x.jpg", resizedImg4x);
+
+        System.out.println("Pomniejszone obrazy zostały zapisane.");
+
+        // ** METODA pyrUP() **
+        // Powiększenie metodoą pyrUp
+        // Metoda pyrUp() powiększa dwurkotnie obraz
+        // Metoda pyrDown() odwrotnie
+        Mat pyrDownImg2x = new Mat();
+        Imgproc.pyrDown(img, pyrDownImg2x);
+
+        // Powiększenie 4 krotne wymaga podwójnego użycia pyrUpu()
+        // Natomiast pomniejszenie wymaga pyrDown()
+        Mat pyrDownImg4x = new Mat();
+        Imgproc.pyrDown(pyrDownImg2x, pyrDownImg4x);
+
+        // Zapisz powiększone obrazy na dysku
+        Imgcodecs.imwrite("pyrDown_2x.jpg", pyrDownImg2x);
+        Imgcodecs.imwrite("pyrDown_4x.jpg", pyrDownImg4x);
+
+        System.out.println("Pomniejszone obrazy zostały zapisane.");
+
+        //HighGui.namedWindow("obraz2", HighGui.WINDOW_NORMAL);
+        //HighGui.imshow("obraz2", wyciecie2);
+        //HighGui.waitKey();
 
 
     }
