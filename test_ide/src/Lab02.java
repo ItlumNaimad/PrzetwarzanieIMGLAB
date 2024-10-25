@@ -64,6 +64,7 @@ public class Lab02 {
         // Utwórz nową macierz o takich samych rozmiarach jak ROI
         Mat wyciecie = new Mat(prostokat.height, prostokat.width, img.type(), new Scalar(0));
         // Kopia fragmentut obrazu do nowej macierzy
+        // funkcja submat
         img.submat(prostokat).copyTo(wyciecie);
         HighGui.namedWindow("obraz1", HighGui.WINDOW_NORMAL);
         HighGui.imshow("obraz1", wyciecie);
