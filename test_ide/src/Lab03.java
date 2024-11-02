@@ -1,7 +1,12 @@
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Lab03 {
@@ -40,15 +45,77 @@ public class Lab03 {
         newImage.put(0, 0, newImageData);
         return newImage;
     }
+    private Mat normalize(Mat base_image) {
+        // Znajdywanie wartości maksymalną i minimalną przed normalizacją
+        Core.MinMaxLocResult minMaxBefore = Core.minMaxLoc(base_image);
+        System.out.println("Przed normalizacją:");
+        System.out.println("Minimalna wartość piksela: " + minMaxBefore.minVal);
+        System.out.println("Maksymalna wartość piksela: " + minMaxBefore.maxVal);
+
+        // Normalizacja obrazu w przedziale <0, 255>
+        Mat normalizedImage = new Mat();
+        Core.normalize(base_image, normalizedImage, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+
+        // Znajdywanie wartości maksymalną i minimalną po normalizacji
+        Core.MinMaxLocResult minMaxAfter = Core.minMaxLoc(normalizedImage);
+        System.out.println("Po normalizacji:");
+        System.out.println("Minimalna wartość piksela: " + minMaxAfter.minVal);
+        System.out.println("Maksymalna wartość piksela: " + minMaxAfter.maxVal);
+
+        return normalizedImage;
+    }
+    public void rgbChannels(Mat base_image) {
+        // Rozdziel obraz na kanały
+        List<Mat> channels = new ArrayList<>();
+        // Rozdzielenie obrazu na trzy kanałay (parametr channels)
+        Core.split(base_image, channels);
+
+        // Macierze na obrazy dla poszczególnych kanałów
+        Mat blueChannel = new Mat();
+        Mat greenChannel = new Mat();
+        Mat redChannel = new Mat();
+
+        /*
+         Wyzeruj pozostałe kanały, aby widoczny był tylko dany kanał
+         BGR channels.get() zachowuje kanał, a Mat.zeros() przypisuje zera w macierzy
+         Dlatego zostawiamy kanał, dla którego koloru chcemy zostawić, a reszte kanałów zerujemy
+        */
+        List<Mat> blueOnly = new ArrayList<>(List.of(channels.get(0), Mat.zeros(base_image.size(), CvType.CV_8U), Mat.zeros(base_image.size(), CvType.CV_8U)));
+        List<Mat> greenOnly = new ArrayList<>(List.of(Mat.zeros(base_image.size(), CvType.CV_8U), channels.get(1), Mat.zeros(base_image.size(), CvType.CV_8U)));
+        List<Mat> redOnly = new ArrayList<>(List.of(Mat.zeros(base_image.size(), CvType.CV_8U), Mat.zeros(base_image.size(), CvType.CV_8U), channels.get(2)));
+
+        // Tutaj łączymy kanałay z przygotowanymi wcześniej macierzami
+        Core.merge(blueOnly, blueChannel);
+        Core.merge(greenOnly, greenChannel);
+        Core.merge(redOnly, redChannel);
+
+        // Zapisz każdy kanał jako osobny obraz na dysku
+        Imgcodecs.imwrite("kanał_niebieski.jpg", blueChannel);
+        Imgcodecs.imwrite("kanał_zielony.jpg", greenChannel);
+        Imgcodecs.imwrite("kanał_czerwony.jpg", redChannel);
+
+        HighGui.imshow("Niebieski", blueChannel);
+        HighGui.imshow("Zielony", greenChannel);
+        HighGui.imshow("Czerwony", redChannel);
+        HighGui.waitKey();
+    }
     public Lab03()
     {
-        Mat image = Imgcodecs.imread("zapisane.jpg");
+        Mat image = Imgcodecs.imread("ponizsze.jpg");
         if (image.empty()) {
-            System.out.println("Empty image: " + "zapisane.jpg");
+            System.out.println("Empty image: " + "ponizsze.jpg");
             System.exit(0);
         }
+        //ZAD5
+        Mat rgb = Imgcodecs.imread("kanalyrgp.JPG");
+        rgbChannels(rgb);
+        //ZAD4
         // Wywołanie funkcji contrast która zwraca macierz ze zmianą kontrastu
-        Mat newImage = contrast(image);
+        // Mat newImage = contrast(image);
+        // Wywołanie funkcji normalize, która normalizuje obraz
+        Mat grayImage = new Mat();
+        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+        Mat newImage = normalize(grayImage);
         HighGui.imshow("Original Image", image);
         HighGui.imshow("New Image", newImage);
         HighGui.waitKey();
