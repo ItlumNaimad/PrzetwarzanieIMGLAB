@@ -45,6 +45,7 @@ public class Lab03 {
         newImage.put(0, 0, newImageData);
         return newImage;
     }
+    //ZAD 4
     private Mat normalize(Mat base_image) {
         // Znajdywanie wartości maksymalną i minimalną przed normalizacją
         Core.MinMaxLocResult minMaxBefore = Core.minMaxLoc(base_image);
@@ -64,6 +65,7 @@ public class Lab03 {
 
         return normalizedImage;
     }
+    //ZAD 5
     public void rgbChannels(Mat base_image) {
         // Rozdziel obraz na kanały
         List<Mat> channels = new ArrayList<>();
@@ -99,23 +101,107 @@ public class Lab03 {
         HighGui.imshow("Czerwony", redChannel);
         HighGui.waitKey();
     }
+    // ZADANIE 6
+    public Mat convertToHSV(Mat image) {
+        Mat hsvImage = new Mat();
+        Imgproc.cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
+        return hsvImage;
+    }
+    // ZADANIE 7
+    public void applyThresholds(Mat image) {
+        // Konwertuj obraz do skali szarości
+        Mat grayImage = new Mat();
+        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+
+        // Różne metody binaryzacji
+        Mat binary = new Mat();
+        Mat binaryInv = new Mat();
+        Mat truncate = new Mat();
+        Mat toZero = new Mat();
+        Mat toZeroInv = new Mat();
+
+        // Próg binaryzacji
+        double thresholdValue = 50;
+
+        // Przeprowadź binaryzację z różnymi metodami
+        Imgproc.threshold(grayImage, binary, thresholdValue, 200, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(grayImage, binaryInv, thresholdValue, 200, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(grayImage, truncate, thresholdValue, 200, Imgproc.THRESH_TRUNC);
+        Imgproc.threshold(grayImage, toZero, thresholdValue, 200, Imgproc.THRESH_TOZERO);
+        Imgproc.threshold(grayImage, toZeroInv, thresholdValue, 200, Imgproc.THRESH_TOZERO_INV);
+
+        // Wyświetl wyniki
+        HighGui.imshow("Oryginalny obraz", image);
+        HighGui.imshow("Binary Threshold", binary);
+        HighGui.imshow("Binary Threshold Inverted", binaryInv);
+        HighGui.imshow("Truncate Threshold", truncate);
+        HighGui.imshow("To Zero Threshold", toZero);
+        HighGui.imshow("To Zero Threshold Inverted", toZeroInv);
+        HighGui.waitKey();
+    }
+    // ZADANIE 8
+    public void matrixOperations(Mat imageA, Mat imageB) {
+        // Sprawdzenie, czy obrazy są tego samego rozmiaru
+        if (imageA.size().equals(imageB.size()) && imageA.type() == imageB.type()) {
+            Mat addResult = new Mat();
+            Mat subResultAB = new Mat();
+            Mat subResultBA = new Mat();
+            Mat mulResult = new Mat();
+            Mat divResultAB = new Mat();
+            Mat divResultBA = new Mat();
+
+            // Odejmowanie A + B
+            Core.add(imageA, imageB, addResult);
+            Imgcodecs.imwrite("result_add.jpg", addResult);
+
+            // Odejmowanie A - B
+            Core.subtract(imageA, imageB, subResultAB);
+            Imgcodecs.imwrite("result_subtract_AB.jpg", subResultAB);
+
+            // Odejmowanie B - A
+            Core.subtract(imageB, imageA, subResultBA);
+            Imgcodecs.imwrite("result_subtract_BA.jpg", subResultBA);
+
+            // Mnożenie A * B
+            Core.multiply(imageA, imageB, mulResult);
+            Imgcodecs.imwrite("result_multiply.jpg", mulResult);
+
+            // Dzielenie A / B (dzielenie przez zero wstawia czarne piksele)
+            Core.divide(imageA, imageB, divResultAB);
+            Imgcodecs.imwrite("result_divide_AB.jpg", divResultAB);
+
+            // Dzielenie B / A (ta sama zasada co wyżej)
+            Core.divide(imageB, imageA, divResultBA);
+            Imgcodecs.imwrite("result_divide_BA.jpg", divResultBA);
+
+            System.out.println("Operacje arytmetyczne zakończone i zapisane na dysku.");
+        } else {
+            System.out.println("Obrazy muszą mieć ten sam rozmiar i typ, aby można było wykonać operacje arytmetyczne.");
+        }
+    }
     public Lab03()
     {
-        Mat image = Imgcodecs.imread("ponizsze.jpg");
+        Mat image = Imgcodecs.imread("zapisane.jpg");
         if (image.empty()) {
-            System.out.println("Empty image: " + "ponizsze.jpg");
+            System.out.println("Empty image: " + "zapisane.jpg");
             System.exit(0);
         }
         //ZAD5
-        Mat rgb = Imgcodecs.imread("kanalyrgp.JPG");
-        rgbChannels(rgb);
+        //Mat rgb = Imgcodecs.imread("kanalyrgp.JPG");
+        //rgbChannels(rgb);
         //ZAD4
         // Wywołanie funkcji contrast która zwraca macierz ze zmianą kontrastu
         // Mat newImage = contrast(image);
         // Wywołanie funkcji normalize, która normalizuje obraz
-        Mat grayImage = new Mat();
-        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
-        Mat newImage = normalize(grayImage);
+        //Mat grayImage = new Mat();
+        //Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+        //Mat newImage = normalize(grayImage);
+        // ZAD 6
+        Mat newImage = convertToHSV(image);
+        // ZAD 7
+        //applyThresholds(image);
+        // ZAD 8
+        matrixOperations(image, image);
         HighGui.imshow("Original Image", image);
         HighGui.imshow("New Image", newImage);
         HighGui.waitKey();
