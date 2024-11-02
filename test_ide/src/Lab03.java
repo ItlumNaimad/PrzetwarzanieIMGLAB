@@ -1,6 +1,4 @@
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
+import org.opencv.core.*;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -142,6 +140,7 @@ public class Lab03 {
     // ZADANIE 8
     public void matrixOperations(Mat imageA, Mat imageB) {
         // Sprawdzenie, czy obrazy są tego samego rozmiaru
+        // Dodałem je w razie gdyby była potrzeba zmiany obrazów na inne
         if (imageA.size().equals(imageB.size()) && imageA.type() == imageB.type()) {
             Mat addResult = new Mat();
             Mat subResultAB = new Mat();
@@ -179,6 +178,51 @@ public class Lab03 {
             System.out.println("Obrazy muszą mieć ten sam rozmiar i typ, aby można było wykonać operacje arytmetyczne.");
         }
     }
+    // ZADANIE 9
+    public void histogram(Mat image) {
+        // Rozdzielanie obrazu na kanały B, G, R
+        List<Mat> channels = new ArrayList<>();
+        Core.split(image, channels);
+        // Parametry histogramu
+        MatOfInt histSize = new MatOfInt(256); // Liczba "kubełków" histogramu
+        MatOfFloat histRange = new MatOfFloat(0, 256); // Zakres wartości pikseli
+        // Kolory histogramu dla każdego kanału
+        Scalar[] colors = { new Scalar(255, 0, 0), new Scalar(0, 255, 0), new Scalar(0, 0, 255) };
+        String[] channelNames = { "Blue", "Green", "Red" };
+        // Utworzenie macierzy na histogramy dla każdego kanału
+        List<Mat> histograms = new ArrayList<>();
+        // Obliczenie histogramu dla każdego kanału
+        for (Mat channel : channels) {
+            Mat hist = new Mat();
+            Imgproc.calcHist(List.of(channel), new MatOfInt(0), new Mat(), hist, histSize, histRange);
+            histograms.add(hist);
+        }
+        // Rysowanie histogramu
+        int histWidth = 512;
+        int histHeight = 400;
+        int binWidth = (int) Math.round((float) histWidth / histSize.get(0, 0)[0]);
+
+        Mat histImage = new Mat(histHeight, histWidth, image.type(), new Scalar(0, 0, 0));
+
+        for (int i = 0; i < histograms.size(); i++) {
+            // Normalizacja histogramu
+            Core.normalize(histograms.get(i), histograms.get(i), 0, histImage.rows(), Core.NORM_MINMAX);
+
+            // Rysowanie linii dla każdego kanału
+            for (int j = 1; j < histSize.get(0, 0)[0]; j++) {
+                int x1 = binWidth * (j - 1);
+                int y1 = (int) (histHeight - Math.round(histograms.get(i).get(j - 1, 0)[0]));
+                int x2 = binWidth * j;
+                int y2 = (int) (histHeight - Math.round(histograms.get(i).get(j, 0)[0]));
+
+                Imgproc.line(histImage, new org.opencv.core.Point(x1, y1), new org.opencv.core.Point(x2, y2), colors[i], 2);
+            }
+        }
+        // Wyświetlenie histogramu
+        HighGui.imshow("Histogram", histImage);
+        HighGui.waitKey();
+    }
+
     public Lab03()
     {
         Mat image = Imgcodecs.imread("zapisane.jpg");
@@ -197,13 +241,15 @@ public class Lab03 {
         //Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
         //Mat newImage = normalize(grayImage);
         // ZAD 6
-        Mat newImage = convertToHSV(image);
+        //Mat newImage = convertToHSV(image);
         // ZAD 7
         //applyThresholds(image);
         // ZAD 8
-        matrixOperations(image, image);
+        //matrixOperations(image, image);
+        //ZAD 9
+        histogram(image);
         HighGui.imshow("Original Image", image);
-        HighGui.imshow("New Image", newImage);
+        //HighGui.imshow("New Image", newImage);
         HighGui.waitKey();
         System.exit(0);
     }
