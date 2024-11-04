@@ -5,8 +5,9 @@ public class Main {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         //new Lab01();
         //new Lab02();
-        new Lab03();
+        //new Lab03();
         //new Lab03Zad3();
+        new Lab04();
     }
 }
 
