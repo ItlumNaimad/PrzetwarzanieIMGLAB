@@ -85,8 +85,39 @@ public class Lab04 {
         }
         return  drawing;
     }
+    // ZADANIE 7
+    public Mat generateSkeleton(Mat grayImage) {
+        Mat binaryImage = new Mat();
+        threshold(grayImage, binaryImage, 127, 255, THRESH_BINARY);
+        Mat skel = Mat.zeros(binaryImage.size(), CvType.CV_8UC1); // Obraz wynikowy dla szkieletu
+        Mat temp = new Mat();
+        Mat eroded = new Mat();
+
+        // Element strukturalny dla erozji i dylatacji
+        Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(3, 3));
+
+        while (true) {
+            // Erozja
+            Imgproc.erode(binaryImage, eroded, element);
+            // Dilatacja na obrazie po erozji
+            Imgproc.dilate(eroded, temp, element);
+            // Uzyskanie różnicy: binaryImage - temp
+            Core.subtract(binaryImage, temp, temp);
+            // Dodanie wyniku do szkieletu
+            Core.bitwise_or(skel, temp, skel);
+            // Aktualizacja obrazu wejściowego dla kolejnych iteracji
+            eroded.copyTo(binaryImage);
+
+            // Sprawdzenie, czy obraz się nie zmienił
+            if (Core.countNonZero(binaryImage) == 0) {
+                break;
+            }
+        }
+
+        return skel;
+    }
     public Lab04(){
-        image = Imgcodecs.imread("zapisane.jpg");
+        image = Imgcodecs.imread("C:\\Users\\naima\\Java\\Przetwrz_laby\\PrzetwarzanieIMGLAB\\test_ide\\lab4\\n.jpg");
         // Zmiana obrazu z macierzy image na skalę szarości
 
         cvtColor(image, gray_image, COLOR_BGR2GRAY);
@@ -109,9 +140,14 @@ public class Lab04 {
         HighGui.imshow("Otwarcie", opened);
         HighGui.imshow("Zamknięcie", closed);
          */
+        /*
         // Zadanie 6
         Mat counturs = findAndDrawContours();
         HighGui.imshow("Counturs", counturs);
+         */
+        // ZAD 7
+        Mat skeleton = generateSkeleton(gray_image);
+        HighGui.imshow("Skeleton", skeleton);
         HighGui.waitKey();
         System.exit(0);
     }
