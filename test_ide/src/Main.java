@@ -7,7 +7,8 @@ public class Main {
         //new Lab02();
         //new Lab03();
         //new Lab03Zad3();
-        new Lab04();
+        //new Lab04();
+        new Lab05();
     }
 }
 
