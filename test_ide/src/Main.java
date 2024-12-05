@@ -1,4 +1,5 @@
 import org.opencv.core.Core;
+import org.opencv.core.CvException;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,7 +9,8 @@ public class Main {
         //new Lab03();
         //new Lab03Zad3();
         //new Lab04();
-        new Lab05();
+        //new Lab05();
+        new Lab06();
     }
 }
 
