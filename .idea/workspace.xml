@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1feafa5f-3609-4187-ac52-8ac70d150cf2" name="Changes" comment="" />
+    <list default="true" id="1feafa5f-3609-4187-ac52-8ac70d150cf2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/test_ide/src/Lab07.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/kanalyrgp.JPG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/kanaĹ‚_czerwony.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/kanaĹ‚_niebieski.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/kanaĹ‚_zielony.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/pyrDown_2x.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/pyrDown_4x.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/pyrUp_2x.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/pyrUp_4x.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_add.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_divide_AB.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_divide_BA.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_multiply.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_subtract_AB.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/result_subtract_BA.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test_ide/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/zapisane_025x.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_ide/zapisane_05x.jpg" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,6 +66,7 @@
       <updated>1729545448651</updated>
       <workItem from="1729545449966" duration="22000" />
       <workItem from="1733219074556" duration="43000" />
+      <workItem from="1734429273953" duration="6000" />
     </task>
     <servers />
   </component>
