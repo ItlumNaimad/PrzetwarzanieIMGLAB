@@ -14,19 +14,30 @@ public class Lab07 {
         static{
             System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         }
-        private Mat loadImage(String filePath) {
-            Mat image = Imgcodecs.imread(filePath);
+        private Mat loadImage(String imagePath) {
+            // Dla wczytywania obrazów z kanałem alfa musiałem zmodyfikować
+            // Metodę wczytującą obrazy dodając parametr IMREAD_UNCHANGED
+            Mat image = Imgcodecs.imread(imagePath, Imgcodecs.IMREAD_UNCHANGED);
             if (image.empty()) {
-                System.out.println("Nie udało się wczytać obrazu: " + filePath);
-                System.exit(0);
+                System.out.println("Nie udało się wczytać obrazu: " + imagePath);
+                System.exit(1);
             }
             return image;
         }
+
     // Funkcja do podmiany tła ZADANIE 1
+    // Musiała zostać poprawiona bo powodowała błędy
     private Mat replaceBackground(String backgroundPath, String selfiePath) {
-        // Wczytanie obrazów
         Mat background = loadImage(backgroundPath);
         Mat selfie = loadImage(selfiePath);
+
+        // Usuń kanał alfa, jeśli istnieje
+        if (background.channels() == 4) {
+            Imgproc.cvtColor(background, background, Imgproc.COLOR_BGRA2BGR);
+        }
+        if (selfie.channels() == 4) {
+            Imgproc.cvtColor(selfie, selfie, Imgproc.COLOR_BGRA2BGR);
+        }
 
         // Dopasowanie rozmiaru obrazów
         Imgproc.resize(background, background, selfie.size());
@@ -43,22 +54,17 @@ public class Lab07 {
         Mat mask = new Mat();
         Core.inRange(hsvSelfie, lowerGreen, upperGreen, mask);
 
-        // Poprawa maski za pomocą różnych metod
-        Mat gaussianMask = smoothEdges(mask, GAUSSIAN);
-        Mat medianMask = smoothEdges(mask, MEDIAN);
-        Mat morphOpenMask = smoothEdges(mask, MORPH_OPEN);
+        // Pokasowałem resztę masek z różnymi filtrami
         Mat morphCloseMask = smoothEdges(mask, MORPH_CLOSE);
 
-        // Odwrócenie maski dla każdej metody
+        // Odwrócenie maski
         Mat invertedMask = new Mat();
-        Core.bitwise_not(morphCloseMask, invertedMask); // Przykład użycia maski z domknięciem
-        //Core.bitwise_not(morphOpenMask, invertedMask); // Przykład użycia maski z otwarciem
-        //Core.bitwise_not(medianMask, invertedMask); // Przykład użycia maski miedianowej
-        //Core.bitwise_not(gaussianMask, invertedMask); // Przykład użycia maski gaussa
+        Core.bitwise_not(morphCloseMask, invertedMask);
+
         // Wyciągnięcie tła i selfie
         Mat backgroundPart = new Mat();
         Mat selfiePart = new Mat();
-        Core.bitwise_and(background, background, backgroundPart, morphOpenMask);
+        Core.bitwise_and(background, background, backgroundPart, morphCloseMask);
         Core.bitwise_and(selfie, selfie, selfiePart, invertedMask);
 
         // Scalanie tła i selfie
@@ -70,15 +76,17 @@ public class Lab07 {
         //HighGui.imshow("Selfie przed zielonym ekranem", selfie);
         //HighGui.imshow("Maska (oryginalna)", mask);
         //HighGui.imshow("Maska (Gaussian)", gaussianMask);
-       // HighGui.imshow("Maska (Median)", medianMask);
+        // HighGui.imshow("Maska (Median)", medianMask);
         //HighGui.imshow("Maska (Otwarcie)", morphOpenMask);
         //HighGui.imshow("Maska (Domknięcie)", morphCloseMask);
         //HighGui.imshow("Obraz z podmienionym tłem (MEDIANA))", result);
 
         //HighGui.waitKey();
         //System.exit(0);
+
         return result;
     }
+
 
     private Mat smoothEdges(Mat mask, int method) {
         Mat smoothedMask = new Mat();
@@ -114,63 +122,53 @@ public class Lab07 {
         return smoothedMask;
     }
 
-    // ZADANIE 4
-    private void applyFrame(Mat baseImage, String framePath) {
-        // Wczytanie obrazu ramki
-        Mat frame = loadImage(framePath);
+    private void applyFrame(Mat image, String framePath) {
+        Mat frame = loadImage(framePath); // Wczytaj ramkę z kanałem alfa
 
-        // Dopasowanie rozmiaru ramki do obrazu
-        Imgproc.resize(frame, frame, baseImage.size());
-
-        // Rozdzielenie kanałów ramki na BGR i Alfa
-        List<Mat> frameChannels = new ArrayList<>();
-        Core.split(frame, frameChannels);
-
-        if (frameChannels.size() < 4) {
-            System.out.println("Obraz ramki nie zawiera kanału alfa.");
+        // Sprawdź, czy ramka zawiera kanał alfa
+        if (frame.channels() != 4) {
+            System.out.println("Ramka nie zawiera kanału alfa. Przerywam działanie.");
             return;
         }
 
-        Mat frameAlpha = frameChannels.get(3); // Kanał alfa
-        Mat frameBGR = new Mat();
-        Core.merge(frameChannels.subList(0, 3), frameBGR); // Kanały BGR
+        // Dopasowanie rozmiaru ramki do obrazu
+        Imgproc.resize(frame, frame, image.size());
 
-        // Normalizacja kanału alfa do zakresu 0–1
-        Mat normalizedAlpha = new Mat();
-        frameAlpha.convertTo(normalizedAlpha, CvType.CV_32F, 1.0 / 255.0);
+        // Rozdzielenie ramki na kanały: B, G, R, Alpha
+        List<Mat> frameChannels = new ArrayList<>();
+        Core.split(frame, frameChannels);
+        Mat alphaChannel = frameChannels.get(3); // Kanał alfa
 
-        // Konwersja obrazów do 32-bitowego formatu
-        Mat baseImageFloat = new Mat();
-        Mat frameBGRFloat = new Mat();
-        baseImage.convertTo(baseImageFloat, CvType.CV_32FC3);
-        frameBGR.convertTo(frameBGRFloat, CvType.CV_32FC3);
+        // Utworzenie maski i odwróconej maski z kanału alfa
+        Mat mask = new Mat();
+        Mat invertedMask = new Mat();
+        Imgproc.threshold(alphaChannel, mask, 0, 255, Imgproc.THRESH_BINARY);
+        Core.bitwise_not(mask, invertedMask);
 
-        // Odwrócenie kanału alfa
-        Mat invertedAlpha = new Mat();
-        Core.subtract(Mat.ones(normalizedAlpha.size(), CvType.CV_32F), normalizedAlpha, invertedAlpha);
+        // Przygotowanie części ramki (RGB bez kanału alfa)
+        Mat frameRGB = new Mat();
+        Core.merge(frameChannels.subList(0, 3), frameRGB);
 
-        // Nakładanie ramki na obraz
-        Core.multiply(frameBGRFloat, normalizedAlpha, frameBGRFloat); // Ramka z przezroczystością
-        Core.multiply(baseImageFloat, invertedAlpha, baseImageFloat); // Obraz bez ramki
-        Mat blended = new Mat();
-        Core.add(frameBGRFloat, baseImageFloat, blended); // Dodanie obrazu i ramki
+        // Wyodrębnienie tła z obrazu oraz ramki
+        Mat imageBackground = new Mat();
+        Mat frameForeground = new Mat();
+        Core.bitwise_and(image, image, imageBackground, invertedMask);
+        Core.bitwise_and(frameRGB, frameRGB, frameForeground, mask);
 
-        // Konwersja do 8-bitowego obrazu
-        blended.convertTo(blended, CvType.CV_8UC3);
+        // Połączenie obrazu z ramką
+        Mat combined = new Mat();
+        Core.add(imageBackground, frameForeground, combined);
 
         // Wyświetlenie wyniku
-        HighGui.imshow("Oryginalny obraz", baseImage);
-        HighGui.imshow("Ramka", frame);
-        HighGui.imshow("Obraz z ramką", blended);
-
+        HighGui.imshow("Obraz z nałożoną ramką", combined);
         HighGui.waitKey();
-        System.exit(0);
     }
+
 
     // Konstruktor
     public Lab07() {
         String backgroundPath = "tlo.jpg"; // Ścieżka do tła
-        String selfiePath = "mieciu.png";         // Ścieżka do selfieh
+        String selfiePath = "mieciu.png";         // Ścieżka do selfie
         String brightSelfie = "brigthermeciu.png";
         String framePath = "ramka.png";
         // ZADANIE 1
