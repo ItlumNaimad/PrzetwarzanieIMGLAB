@@ -250,10 +250,13 @@ public class Lab07 {
         }
 
         // Zapis obrazu z zaznaczoną twarzą
-        String outputPath = "detected.jpg"; // Zamień na ścieżkę do pliku wyjściowego
+        String outputPath = "detected1.jpg"; // Zamień na ścieżkę do pliku wyjściowego
         Imgcodecs.imwrite(outputPath, image);
 
         System.out.println("Zapisano obraz z wykrytą twarzą: " + outputPath);
+        HighGui.imshow("FaceDetect", image);
+        HighGui.waitKey();
+        System.exit(0);
     }
     // ***ZADANIE 8 ***
     public void trackFaceInVideo(String videoPath, String cascadePath, String outputPath) {
@@ -340,6 +343,7 @@ public class Lab07 {
         // Zadanie 3 replaceBackground(backgroundPath, brightSelfie);
         // Zadanie 4
         //applyFrame(new_image, framePath);
+        // ZADANIE 5
         //processVideo(videoPath, backgroundPath, outputPath);
         //System.out.println("Przetwarzanie wideo zakończone. Plik zapisany jako: " + outputPath);
         // ZADANIE 7
@@ -347,7 +351,7 @@ public class Lab07 {
         // ZADANIE 8
         //trackFaceInVideo(videoPath, cascadePath, outputPath2);
         // ZADANIE 9
-        faceDetect(loadImage("ponizsze.JPG"), cascadePath);
+        //faceDetect(loadImage("ponizsze.JPG"), cascadePath);
         faceDetect(loadImage("zapisane.jpg"), cascadePath);
     }
 }
